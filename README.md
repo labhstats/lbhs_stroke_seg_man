@@ -8,7 +8,7 @@ A repository for supplementary considerations required to run certain stroke seg
 - R 3.3.3
 
 # LINDA
-The stroke segmentation software LINDA is already well documented (https://github.com/dorianps/LINDA) and easy enough to get running for native space segmentation, but could do with a few more comments regarding.
+The stroke segmentation software LINDA is already well documented (https://github.com/dorianps/LINDA) and easy enough to get running for native space segmentation, but could do with a few more comments regarding special user cases encountered.
 
 The original paper is at: http://doi.org/10.1002/hbm.23110
 
@@ -38,19 +38,31 @@ In the example run (done on a single core) at LINDA's GitHub page, the run took 
 Took 30.5 minutes. This ran without parallell specifications in R (lapply, etc), although many processes throughout the segmentation used all available threads. This may indicate that user specified parallell processing is not necessarily beneficial with a relatively small amount of cores (< 6 cores and < 12 threads).
 
 The result appears fairly good for descriptive purposes when thresholded at 50% (or 0.5), but not close to voxel perfection. Prediction range was at 0 to 1.
+Both the probability and program prediction was okay. Although it seems that the program prediction used something else than a 50% threshold, as it thought a larger area was stroke afflicted.
+
+To clarify:
+- probability prediction = Prediction3_probability_native
+- program prediction = Prediction3_native
 
 ### Test case 2 - Medium stroke
+Took 33.5 minutes. This ran without parallell specifications in R (lapply, etc), although many processes throughout the segmentation used all available threads. Both faster and slower than the small and large stroke cases, respectively.
 
+Both the program prediction and the probability prediction was ok. 50% threshold was in this case ok, perhaps, due to a prediction range of 0 to 1. Still the program prediction denote a larger area again as afflicted by stroke.
 
+There was a single false positive stroke cluster found. It seems like it mistook an "empty" dark cavity between the grey matter as stroke. Its size is negligiable for descriptive purposes considering the actual stroke site's cluster size.
 
 ### Test case 3 - Small stroke
-Took 41.6 minutes. This ran without parallell specifications in R (lapply, etc), although many processes throughout the segmentation used all available threads. Definitely slower than the Large stroke case.
+Took 41.6 minutes. This ran without parallell specifications in R (lapply, etc), although many processes throughout the segmentation used all available threads. Definitely slower than the Large and Medium stroke cases.
 
 It found the actual stroke site, but also found 3-4 other unrelated false positives. The one largest false positive  essensially doubled the true estimate was unfortunate, but not surprising that the algorithm thought at least parts of it was a stroke due to a local cortex cluster darkening on the T1w image. The remaining smaller errors were expected as with WMH segmentation algorithms, and were not of detrimental size.
 
-A manually selected threshold of 5% (or 0.05) found the actual stroke site sufficiently, and the prediction range was 0 to 0.1783. This can pose a challenge for selecting a single threshold across stroke cases.
+A manually selected threshold of 5% (or 0.05) found the actual stroke site sufficiently, and the prediction range was 0 to 0.1783. This can pose a challenge for selecting a single threshold across stroke cases. 50% of max value in a prediction may be a decent threshold estimate.
 
-It is reasonable to expect lower estimates to be overesimates. If NULL cases are returned from the LINDA algorithm it is consequently also safe to say that it has underestimated the stroke.
+It is reasonable to expect lower stroke estimates to be overestimates. If NULL cases (defined as range[prediction] = 0 to 0) are returned from the LINDA algorithm it is consequently also safe to say that it has underestimated the stroke.
+
+Only the probability prediction was ok. The program prediction yielded a NULL case, which suggest that the built-in threshold is not necessarily optimal enough. 
+
+This sub-optimailty in thresholding is especially true in situations where it is known apriori that all images supplied to the algorithm has confirmed ischemic strokes. The comparison paper, linked earlier, had an issue with quite a few NULL cases, some which potentially could have been avoided if a different thresholding scheme had been applied.
 
 ## Storage consumption
 Each new run/prediction is expected to use at least up to 200MB of storage. 2 out of 3 of our runs took this much space.
