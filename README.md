@@ -16,8 +16,18 @@ A recent (anno 2019) comparison paper of LINDA with other stroke segmentation al
 
 This paper found LINDA superior in most aspects, but not every aspect. Computational time was one issue, but with adequate computational power (medium end enterprise desktop anno 2019) it is not a significant issue compared to other algorithms in the neuroscience field, and considering the difficulty amassing many stroke cases for a study.
 
-## Wrappers
+## Wrappers to make everything run smoother
 Pending creation...
+
+Four steps of are certainly necessary: (Assuming BIDS)
+1. Create new copies of original T1w images. Ensure a different, but consistent filename. (Python?; Easy to manipulate file systems with.)
+2. Swapdir of each image. (BaSh?; The key is either way to use a shell with a path to FSL. Python and R has "system" commands, but not necessarily with FSL.)
+3. Run the prediction. (R)
+4. Read and amass relevant information. In this case number of voxels and another thresholding (Matlab?; Easy to read and do math on 3D+ arrays.)
+
+A list should be made to denote which ID that has stroke on which hemisphere. This list can be implemented in either step 1 or 3.
+
+Ideally everything should be handled in R for simplicity.
 
 ## Libraries and additional software required 
 There are two instances that may prove troublesome if you haven't already installed the R package "devtools" and "ANTsR"/"ITKR".
