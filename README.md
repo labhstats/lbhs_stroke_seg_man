@@ -17,7 +17,6 @@ A recent (anno 2019) comparison paper of LINDA with other stroke segmentation al
 This paper found LINDA superior in most aspects, but not every aspect. Computational time was one issue, but with adequate computational power (medium end enterprise desktop anno 2019) it is not a significant issue compared to other algorithms in the neuroscience field, and considering the difficulty amassing many stroke cases for a study.
 
 ## Wrappers to make everything run smoother
-Pending creation...
 
 Four steps of are certainly necessary: (Assuming BIDS)
 1. Create new copies of original T1w images. Ensure a different, but consistent filename. (Python?; Easy to manipulate file systems with.)
@@ -46,7 +45,7 @@ To flip images we used FSL (https://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Fslutils), mo
 
 A .sh script may be the most efficient to flip the required (or all) images.
 
-## Speed and core/thread usage comments
+## Speed, performance and core/thread usage comments
 In the example run (done on a single core) at LINDA's GitHub page, the run took 3.5 hours. This may appear as "too much" in some situation. But, as experienced on our test rig, the computational time is at best 1/7th of this. It is unknown what Hz the CPU in the example run had.
 
 ### Test case 1 - Large stroke
@@ -78,6 +77,15 @@ It is reasonable to expect lower stroke estimates to be overestimates. If NULL c
 Only the probability prediction was ok. The program prediction yielded a NULL case, which suggest that the built-in threshold is not necessarily optimal enough. 
 
 This sub-optimailty in thresholding is especially true in situations where it is known apriori that all images supplied to the algorithm has confirmed ischemic strokes. The comparison paper, linked earlier, had an issue with quite a few NULL cases, some which potentially could have been avoided if a different thresholding scheme had been applied.
+
+### Test case 4 - Bilateral medium stroke
+Took 27.7 and 37.7 minutes to segment left and right hemispheres respectively. This ran without parallell specifications in R (lapply, etc), although many processes throughout the segmentation used all available threads.
+
+The probability prediction found all apparent stroke sites. But, it did not manage to fill the whole extent of the strokes and had somewhat substantial wrongful segmentation. This is not unexpected, although ok to confirm.
+
+It should be mentioned that the stroke sites were quite symmetric (2 of 4) between the hemispheres. As such, it is not strange that the prediction range suffered 0 to 0.916 [left] and 0 to 0.999 [right]. The idea with using a 50% of max range seems to suffer in this bilateral case, as one of the stroke sites vanished at 0.46 threshold [left]. Suggesting that a 50% relative threshold is too simple for the most accurate segmentation. On the contrary the [left] program prediction did find both stroke sites.
+
+It is reasonable to assume that bilateral cases do underestimate the correctly detected stroke sites. It is perhaps also a question of defining what parts of an image could be defined as a stroke, and the algorithm may in itself not consider darker than penumbra areas to be a stroke area (dead tissue that is washed away/removed over time leaving a CSF cavity?).
 
 ## Storage consumption
 Each new run/prediction is expected to use at least up to 200MB of storage. 3 out of 3 of our runs took this much space.
