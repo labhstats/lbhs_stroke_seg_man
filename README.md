@@ -29,7 +29,7 @@ A list should be made to denote which ID that has stroke on which hemisphere. Th
 
 Ideally everything should be handled in R for simplicity.
 
-**PS! It has come to my attention that simply setting "cache = TRUE", presents an error in the "linda_predict" because it cannot find the output object "L" when the segmentation already exists (intentional from my part). This stops the whole LINDA wrapper for "no" reason, as the output path is of no interest when we want to use the probability prediction in native space. This can be bypassed by creating a new script with "R/aaa_utils.R/print_msg" [found in GitHub] function and "LINDA::linda_predict" [from inside R] or by commenting out the last "return(L)" line.**
+**PS! It has come to my attention that simply setting "cache = TRUE", presents an error in the "linda_predict" because it cannot find the output object "L" when the segmentation already exists (intentional from my part). This stops the whole LINDA wrapper for "no" reason, as the output path is of no interest when we want to use the probability prediction in native space. This can be bypassed by creating a new script with "R/aaa_utils.R/print_msg" [found in GitHub] function and "LINDA::linda_predict" [from inside R] or by commenting out the last "return(L)" line. Also remember to load the ANTsRCore, ANTsR and ITKR before running the ad-hoc (custom) hack of "linda_predict". See the issue-thread (https://github.com/dorianps/LINDA/issues/24) for potential development of the issue.**
 
 ## Libraries and additional software required 
 There are two instances that may prove troublesome if you haven't already installed the R package "devtools" and "ANTsR"/"ITKR".
